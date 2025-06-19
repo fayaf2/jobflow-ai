@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        #header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        #messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            max-width: 75%;
+        }
+        .message.user {
+            background-color: #daf1da;
+            align-self: flex-end;
+        }
+        .message.bot {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+        }
+        #input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #fafafa;
+        }
+        #userInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        #sendButton {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="chat-container">
+    <div id="header">
+        <h1>Welcome to the Job Chatbot</h1>
+        <p>User Email: <span id="user-email"></span></p>
+    </div>
+    <div id="messages"></div>
+    <div id="input-container">
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch and display the user email
+        fetch('get_user_email.php')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('user-email').innerText = data;
+            })
+            .catch(() => {
+                document.getElementById('user-email').innerText = 'Failed to load email';
+            });
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('userInput');
+        const message = input.value.trim().toLowerCase();
+
+        if (message !== "") {
+            appendMessage(message, 'user');
+            handleChatbotResponse(message);
+            input.value = '';
+        }
+    }
+
+    function appendMessage(message, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message ' + sender;
+        messageElement.innerText = message;
+        document.getElementById('messages').appendChild(messageElement);
+        document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+    }
+
+    function handleChatbotResponse(message) {
+        fetch('get_jobs.php')
+            .then(response => response.json())
+            .then(jobs => {
+                if (jobs[message]) {
+                    const job = jobs[message];
+                    const response = `Job: ${job.title}\nDetails: ${job.details}\nApply here: ${job.applyLink}`;
+                    appendMessage(response, 'bot');
+                } else {
+                    appendMessage("Sorry, I don't understand. Please try asking about a specific job or type 'upload job' to add a new job.", 'bot');
+                }
+            });
+    }
+</script>
+</body>
+</html>

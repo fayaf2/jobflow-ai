@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #formContainer {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="formContainer">
+        <div id="createAccountSection" class="form-section">
+            <h2>Create Account</h2>
+            <form action="register.php" method="post">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+        <div id="signInSection" class="form-section hidden">
+            <h2>Sign In</h2>
+            <form action="sign_in.php" method="post">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+                <button type="button" id="forgotPasswordButton">Forgot Password?</button>
+            </form>
+        </div>
+        <div id="forgotPasswordSection" class="form-section hidden">
+            <h2>Forgot Password</h2>
+            <form action="forgot_password.php" method="post">
+                <input type="email" name="email" placeholder="Enter your email" required>
+                <button type="submit">Send Password</button>
+            </form>
+            <button type="button" id="backToSignInButton">Back to Sign In</button>
+        </div>
+        <div class="form-section">
+            <button id="toggleButton">Switch to Sign In</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            var createAccountSection = document.getElementById('createAccountSection');
+            var signInSection = document.getElementById('signInSection');
+            var toggleButton = document.getElementById('toggleButton');
+
+            if (createAccountSection.classList.contains('hidden')) {
+                createAccountSection.classList.remove('hidden');
+                signInSection.classList.add('hidden');
+                toggleButton.textContent = 'Switch to Sign In';
+            } else {
+                createAccountSection.classList.add('hidden');
+                signInSection.classList.remove('hidden');
+                toggleButton.textContent = 'Switch to Create Account';
+            }
+        });
+
+        document.getElementById('forgotPasswordButton').addEventListener('click', function() {
+            document.getElementById('signInSection').classList.add('hidden');
+            document.getElementById('forgotPasswordSection').classList.remove('hidden');
+        });
+
+        document.getElementById('backToSignInButton').addEventListener('click', function() {
+            document.getElementById('forgotPasswordSection').classList.add('hidden');
+            document.getElementById('signInSection').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
